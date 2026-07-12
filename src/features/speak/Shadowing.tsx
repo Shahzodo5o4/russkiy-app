@@ -17,6 +17,7 @@ export default function Shadowing({ unitId }: { unitId: string }) {
   const [rec, setRec] = useState<Recorder | null>(null);
   const [myUrl, setMyUrl] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const [speed, setSpeed] = useState(1.0);
 
   useEffect(() => {
     storage.getBlocks(unitId).then((all) => {
@@ -88,9 +89,20 @@ export default function Shadowing({ unitId }: { unitId: string }) {
             <p className="ru-text mt-2"><StressedText text={sentence} /></p>
           </div>
 
+          <div className="flex justify-center gap-1">
+            {[0.75, 1.0, 1.25].map((s) => (
+              <button key={s} onClick={() => setSpeed(s)}
+                className={`rounded border px-2 py-1 font-mono text-sm ${
+                  speed === s ? 'border-ink bg-ink text-paper' : 'border-grid bg-white'
+                }`}>
+                {s}×
+              </button>
+            ))}
+          </div>
+
           <div className="flex flex-wrap justify-center gap-2">
-            <button className={btn} onClick={() => void speakAsync(sentence, 0.75)}>
-              🔊 Eshitish (0.75×)
+            <button className={btn} onClick={() => void speakAsync(sentence, speed)}>
+              🔊 Eshitish
             </button>
             {phase === 'idle' && (
               <button className={`${btn} border-miss text-miss`} onClick={() => void record()}>
@@ -107,7 +119,7 @@ export default function Shadowing({ unitId }: { unitId: string }) {
               <>
                 <button className={btn} onClick={() => void playMine()}>▶ Mening ovozim</button>
                 <button className={btn}
-                  onClick={async () => { await speakAsync(sentence, 0.75); await playMine(); }}>
+                  onClick={async () => { await speakAsync(sentence, speed); await playMine(); }}>
                   ▶▶ Yonma-yon
                 </button>
                 <button className={btn} onClick={() => void record()}>🎙 Qayta</button>

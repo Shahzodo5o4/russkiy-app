@@ -27,7 +27,7 @@ export default function AudioList({ unitId }: { unitId: string }) {
           <li key={a.id} className="rounded border border-grid p-2">
             <p className="mb-1 text-sm">{a.title}</p>
             {urls[a.id] ? (
-              <LoopPlayer src={urls[a.id]} />
+              <LoopPlayer src={urls[a.id]} title={a.title} />
             ) : (
               <button
                 onClick={() => void loadUrl(a.id)}

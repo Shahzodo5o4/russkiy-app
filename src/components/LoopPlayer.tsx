@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-const SPEEDS = [0.6, 0.75, 1.0] as const;
+const SPEEDS = [1.0, 1.25, 1.5] as const;
 
 function fmt(t: number): string {
   const m = Math.floor(t / 60);

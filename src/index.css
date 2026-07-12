@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --ink: #14213d;
+  --paper: #fbfbf8;
+  --grid: #e3e6ec;
+  --stress: #e8a33d;
+  --muted: #6b7684;
+  --ok: #3f7d5c;
+  --miss: #c4553b;
+}
+
+body {
+  @apply font-sans text-base text-ink;
+  background-color: var(--paper);
+  /* Nozik kletka (тетрадь в клетку) — sezilar-sezilmas, 24px */
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      transparent 0 23px,
+      rgba(227, 230, 236, 0.55) 23px 24px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 23px,
+      rgba(227, 230, 236, 0.55) 23px 24px
+    );
+}
+
+/* Rus matni — har doim body'dan bir pog'ona katta */
+.ru-text {
+  @apply font-ru text-lg;
+}
+
+/* URG'U — --stress rangi FAQAT shu klass orqali ishlatiladi */
+.text-stress-accent {
+  color: var(--stress);
+}
+
+/* Markdown kontent — daftar uslubi */
+.md h1, .md h2, .md h3 {
+  @apply mt-4 font-semibold;
+}
+.md h1 { @apply text-lg; }
+.md h2 { @apply text-base; }
+.md p { @apply mt-2; }
+.md ul, .md ol { @apply mt-2 list-inside pl-1; }
+.md ul { @apply list-disc; }
+.md ol { @apply list-decimal; }
+.md strong { @apply font-semibold; }
+.md code { @apply rounded bg-paper px-1 font-mono text-sm; }
+.md blockquote { @apply mt-2 border-l-2 border-grid pl-3 text-muted; }
+.md .table-wrap, .md table { @apply mt-3 w-full; }
+.md table { @apply border-collapse text-sm; }
+.md th, .md td { @apply border border-grid px-2 py-1.5 text-left align-top; }
+.md th { @apply bg-paper font-medium; }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

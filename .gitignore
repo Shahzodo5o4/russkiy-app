@@ -1,0 +1,27 @@
+# ── Kontent va shaxsiy materiallar — HECH QACHON commit qilinmaydi ──
+# Mualliflik huquqi + spetsifikatsiya 10-bo'lim
+books/
+audios/
+content/local/
+*.mp3
+*.m4a
+*.wav
+
+# ── Maxfiy kalitlar ──
+.env
+.env.*
+!.env.example
+
+# ── Node / Vite ──
+node_modules/
+dist/
+dist-ssr/
+.vite/
+*.local
+
+# ── Editor / OS ──
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db

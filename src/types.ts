@@ -90,7 +90,14 @@ export type Word = {
 
 // ---------- PROGRESS (har profilda ALOHIDA) ----------
 
-export type Profile = { id: string; name: string };
+export type Profile = {
+  id: string;
+  name: string;
+  /** Shu emailli akkaunt kirsa — profil avtomatik tanlanadi */
+  email?: string;
+  /** Admin panel faqat shu profilga ko'rinadi */
+  isAdmin?: boolean;
+};
 
 /** SM-2 karta holati. Bir so'z ikki yo'nalishda o'rganiladi. */
 export type CardState = {

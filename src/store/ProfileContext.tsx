@@ -3,11 +3,14 @@ import {
 } from 'react';
 import type { Profile } from '../types';
 import { storage } from '../storage';
+import { supabase } from '../storage/supabase';
 
 const KEY = 'russkiy.profileId';
 
 type ProfileCtx = {
   profile: Profile;
+  /** Profil emailga bog'langan bo'lsa almashtirish yo'q */
+  locked: boolean;
   switchProfile: () => void;
 };
 
@@ -19,18 +22,26 @@ export function useProfile(): ProfileCtx {
   return ctx;
 }
 
-/** Profil tanlanmagan bo'lsa — tanlov ekrani. Tanlov localStorage'da. */
+/**
+ * Profil tanlash. Agar kirgan akkaunt emaili biror profilga bog'langan bo'lsa —
+ * o'sha profil avtomatik ochiladi (tanlash ekransiz).
+ */
 export function ProfileProvider({ children }: { children: ReactNode }) {
   const [profiles, setProfiles] = useState<Profile[] | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [chosenId, setChosenId] = useState<string | null>(
     () => localStorage.getItem(KEY),
   );
 
   useEffect(() => {
-    storage.getProfiles().then(setProfiles, (e: unknown) => {
-      setError(e instanceof Error ? e.message : String(e));
-    });
+    Promise.all([storage.getProfiles(), supabase.auth.getUser()]).then(
+      ([ps, { data }]) => {
+        setProfiles(ps);
+        setEmail(data.user?.email?.toLowerCase() ?? null);
+      },
+      (e: unknown) => setError(e instanceof Error ? e.message : String(e)),
+    );
   }, []);
 
   if (error) {
@@ -38,10 +49,7 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
       <div className="flex min-h-screen items-center justify-center p-6 text-center">
         <div>
           <p className="text-miss">Bazaga ulanib bo'lmadi.</p>
-          <p className="mt-2 text-sm text-muted">
-            Supabase'da <code className="font-mono">schema.sql</code> ishga
-            tushirilganini tekshiring. ({error})
-          </p>
+          <p className="mt-2 text-sm text-muted">({error})</p>
         </div>
       </div>
     );
@@ -55,7 +63,11 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  const profile = profiles.find((p) => p.id === chosenId);
+  // Email bo'yicha bog'langan profil — ustuvor
+  const bound = email
+    ? profiles.find((p) => p.email?.toLowerCase() === email)
+    : undefined;
+  const profile = bound ?? profiles.find((p) => p.id === chosenId);
 
   if (!profile) {
     return (
@@ -82,9 +94,14 @@ export function ProfileProvider({ children }: { children: ReactNode }) {
   }
 
   const switchProfile = () => {
+    if (bound) return; // emailga bog'langan — almashtirib bo'lmaydi
     localStorage.removeItem(KEY);
     setChosenId(null);
   };
 
-  return <Ctx.Provider value={{ profile, switchProfile }}>{children}</Ctx.Provider>;
+  return (
+    <Ctx.Provider value={{ profile, locked: !!bound, switchProfile }}>
+      {children}
+    </Ctx.Provider>
+  );
 }

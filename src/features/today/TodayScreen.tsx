@@ -84,10 +84,15 @@ export default function TodayScreen() {
               </div>
             ) : (
               <p className="mt-1 text-sm text-muted">
-                Bu dars hali to'ldirilmagan —{' '}
-                <Link to={`/admin/units/${plan.unit.id}`} className="underline">
-                  kontent kiritish
-                </Link>
+                Bu dars hali to'ldirilmagan
+                {profile.isAdmin && (
+                  <>
+                    {' — '}
+                    <Link to={`/admin/units/${plan.unit.id}`} className="underline">
+                      kontent kiritish
+                    </Link>
+                  </>
+                )}
               </p>
             )}
           </div>

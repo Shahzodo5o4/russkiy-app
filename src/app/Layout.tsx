@@ -1,10 +1,11 @@
 import { Link, Outlet } from 'react-router-dom';
 import { useProfile } from '../store/ProfileContext';
+import { supabase } from '../storage/supabase';
 import TabBar from './TabBar';
 
 /** Umumiy qobiq: yuqori panel + kontent + pastki tab bar. */
 export default function Layout() {
-  const { profile, switchProfile } = useProfile();
+  const { profile, locked, switchProfile } = useProfile();
 
   return (
     <div className="mx-auto min-h-screen max-w-6xl pb-20">
@@ -20,16 +21,21 @@ export default function Layout() {
           >
             Qoidalar
           </Link>
-          <Link
-            to="/admin"
-            title="Kontent kiritish"
-            className="rounded border border-grid bg-white px-3 py-1.5 text-sm text-muted"
-          >
-            ⚙
-          </Link>
+          {profile.isAdmin && (
+            <Link
+              to="/admin"
+              title="Kontent kiritish"
+              className="rounded border border-grid bg-white px-3 py-1.5 text-sm text-muted"
+            >
+              ⚙
+            </Link>
+          )}
           <button
-            onClick={switchProfile}
-            title="Profilni almashtirish"
+            onClick={() => {
+              if (locked) void supabase.auth.signOut();
+              else switchProfile();
+            }}
+            title={locked ? 'Chiqish' : 'Profilni almashtirish'}
             className="rounded border border-grid bg-white px-3 py-1.5 text-sm"
           >
             {profile.name}

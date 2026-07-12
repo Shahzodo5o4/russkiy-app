@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { Navigate, NavLink, Outlet } from 'react-router-dom';
+import { useProfile } from '../../store/ProfileContext';
 
 const SECTIONS = [
   { to: 'units', label: 'Darslar' },
@@ -8,8 +9,11 @@ const SECTIONS = [
   { to: 'backup', label: 'Zaxira' },
 ] as const;
 
-/** Admin qobiq — chiroyli emas, TEZ (spec 4.7). */
+/** Admin qobiq — chiroyli emas, TEZ (spec 4.7). Faqat admin profilga. */
 export default function AdminLayout() {
+  const { profile } = useProfile();
+  if (!profile.isAdmin) return <Navigate to="/" replace />;
+
   return (
     <div>
       <h1 className="text-xl font-semibold">Admin</h1>

@@ -79,10 +79,12 @@ export default function UnitScreen() {
       {blocks.length === 0 ? (
         <div className="mt-5">
           <EmptyState message="Bu dars hali to'ldirilmagan." />
-          <Link to={`/admin/units/${unit.id}`}
-            className="mt-3 inline-block rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
-            Kontentni kiritish
-          </Link>
+          {profile.isAdmin && (
+            <Link to={`/admin/units/${unit.id}`}
+              className="mt-3 inline-block rounded bg-ink px-4 py-2 text-sm font-medium text-paper">
+              Kontentni kiritish
+            </Link>
+          )}
         </div>
       ) : (
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr),420px]">

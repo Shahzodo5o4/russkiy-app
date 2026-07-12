@@ -3,6 +3,7 @@ import {
 } from 'recharts';
 import Screen from '../../components/Screen';
 import StressedText from '../../components/StressedText';
+import Compare from './Compare';
 import { storage } from '../../storage';
 import { useAsync } from '../../hooks/useAsync';
 import { useProfile } from '../../store/ProfileContext';
@@ -72,6 +73,8 @@ export default function StatsScreen() {
         <div className={tile}><p className="text-xl font-semibold">{d.mature}</p><p className="text-sm text-muted">mustahkam (21+ kun)</p></div>
         <div className={tile}><p className="text-xl font-semibold">{d.total}</p><p className="text-sm text-muted">jami lug'atda</p></div>
       </div>
+
+      <Compare />
 
       <h2 className="mt-6 text-sm font-medium text-muted">Oxirgi 14 kun — takrorlangan kartalar</h2>
       <div className="mt-2 h-44 rounded border border-grid bg-white p-2">

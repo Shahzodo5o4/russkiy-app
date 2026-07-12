@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import CyrillicKeyboard from './CyrillicKeyboard';
 import StressedText from './StressedText';
 import { softEqual } from '../lib/normalize';
 import { speak } from '../audio/tts';
@@ -54,19 +53,13 @@ export default function TypeAnswer({
       />
 
       {result === null ? (
-        <>
-          <CyrillicKeyboard
-            onKey={(ch) => setValue((v) => v + ch)}
-            onBackspace={() => setValue((v) => v.slice(0, -1))}
-          />
-          <button
-            onClick={submit}
-            disabled={!value.trim()}
-            className="rounded bg-ink py-2.5 font-medium text-paper disabled:opacity-40"
-          >
-            Tekshirish
-          </button>
-        </>
+        <button
+          onClick={submit}
+          disabled={!value.trim()}
+          className="rounded bg-ink py-2.5 font-medium text-paper disabled:opacity-40"
+        >
+          Tekshirish
+        </button>
       ) : (
         <div className="grid gap-3 text-center">
           <p className={result ? 'text-ok' : 'text-miss'}>

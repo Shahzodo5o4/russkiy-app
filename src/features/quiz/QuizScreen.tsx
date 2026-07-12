@@ -10,7 +10,7 @@ import type { Word } from '../../types';
 
 const MODES: { id: QuizMode; label: string; hint: string }[] = [
   { id: 'ru2uz', label: 'RU → UZ', hint: '4 variantdan tanlash' },
-  { id: 'uz2ru', label: 'UZ → RU', hint: 'ruscha yozish (kirill klaviatura)' },
+  { id: 'uz2ru', label: 'UZ → RU', hint: 'ruscha yozish' },
   { id: 'dictation', label: 'Diktant', hint: 'eshitib yozish' },
 ];
 

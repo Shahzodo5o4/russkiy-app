@@ -97,6 +97,8 @@ export type Profile = {
   email?: string;
   /** Admin panel faqat shu profilga ko'rinadi */
   isAdmin?: boolean;
+  /** false bo'lsa — Statistika'dagi 🏆 Raqobat bo'limida ko'rinmaydi va boshqalarni ham ko'rmaydi */
+  competesInStats?: boolean;
 };
 
 /** SM-2 karta holati. Bir so'z ikki yo'nalishda o'rganiladi. */

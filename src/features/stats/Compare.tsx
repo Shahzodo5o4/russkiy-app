@@ -1,5 +1,6 @@
 import { storage } from '../../storage';
 import { useAsync } from '../../hooks/useAsync';
+import { useProfile } from '../../store/ProfileContext';
 import { computeStreak } from '../../lib/streak';
 import { dateKey } from '../../lib/date';
 
@@ -14,8 +15,13 @@ type Row = {
 
 /** 🏆 Raqobat: ikkala profil statistikasi yonma-yon. */
 export default function Compare() {
+  const { profile: me } = useProfile();
+
   const data = useAsync(async () => {
-    const profiles = await storage.getProfiles();
+    // Raqobatdan chiqqan profil (masalan, alohida oila a'zosi) hech kimga ko'rinmaydi.
+    if (me.competesInStats === false) return [];
+    const profiles = (await storage.getProfiles())
+      .filter((p) => p.competesInStats !== false);
     const rows: Row[] = await Promise.all(
       profiles.map(async (p) => {
         const [stats, states] = await Promise.all([

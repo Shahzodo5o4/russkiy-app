@@ -96,6 +96,11 @@ create table if not exists profiles (
   name text not null
 );
 
+-- Keyinchalik qo'shilgan ustunlar (akkaunt bog'lash, admin, raqobat ko'rinishi)
+alter table profiles add column if not exists email text;
+alter table profiles add column if not exists is_admin boolean not null default false;
+alter table profiles add column if not exists competes_in_stats boolean not null default true;
+
 create table if not exists card_states (
   id          text primary key,
   profile_id  text not null references profiles(id) on delete cascade,

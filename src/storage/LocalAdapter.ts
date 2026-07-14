@@ -75,6 +75,9 @@ export class LocalAdapter implements StorageAdapter {
   getUnitProgress(profileId: string, unitId: string): Promise<UnitProgress | undefined> {
     return db.unitProgress.get([profileId, unitId]);
   }
+  listUnitProgress(profileId: string): Promise<UnitProgress[]> {
+    return db.unitProgress.where({ profileId }).toArray();
+  }
   async saveUnitProgress(p: UnitProgress): Promise<void> { await db.unitProgress.put(p); }
 
   async listSpeakingLogs(profileId: string): Promise<SpeakingLogMeta[]> {

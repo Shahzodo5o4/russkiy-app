@@ -13,8 +13,18 @@ export const DEFAULT_NEW_LIMIT = 15;
 export const DEFAULT_REVIEW_LIMIT = 100;
 
 /**
+ * Yangi karta sifatida chiqishga ruxsat: darsga bog'lanmagan so'z (qo'lda
+ * qo'shilgan) yoki darsi to'liq tugatilgan («tugadi») so'z. Boshlangan
+ * kartalar (takrorlash) bunga tegishli emas — ular doim chiqadi.
+ */
+export function isUnlockedAsNew(word: Word, finishedUnits: Set<string>): boolean {
+  return !word.unitId || finishedUnits.has(word.unitId);
+}
+
+/**
  * Kunlik navbat: avval muddati kelgan kartalar (takrorlash),
- * keyin yangi so'zlar (ru2uz, limit bilan).
+ * keyin yangi so'zlar (ru2uz, limit bilan). Yangi so'zlar faqat
+ * tugatilgan darslardan olinadi.
  */
 export async function buildQueue(profileId: string): Promise<{
   items: ReviewItem[];
@@ -25,11 +35,16 @@ export async function buildQueue(profileId: string): Promise<{
     storage.getSetting<number>('reviewLimit'),
   ]);
 
-  const [due, states, words] = await Promise.all([
+  const [due, states, words, progress] = await Promise.all([
     storage.getDueCards(profileId, endOfToday(), reviewLimit ?? DEFAULT_REVIEW_LIMIT),
     storage.getCardStates(profileId),
     storage.getWords(),
+    storage.listUnitProgress(profileId),
   ]);
+
+  const finishedUnits = new Set(
+    progress.filter((p) => p.state === 'tugadi').map((p) => p.unitId),
+  );
 
   const wordMap = new Map(words.map((w) => [w.id, w]));
 
@@ -46,7 +61,7 @@ export async function buildQueue(profileId: string): Promise<{
   );
 
   const newItems: ReviewItem[] = words
-    .filter((w) => !hasRu2uz.has(w.id))
+    .filter((w) => !hasRu2uz.has(w.id) && isUnlockedAsNew(w, finishedUnits))
     .sort((a, b) => a.createdAt - b.createdAt)
     .slice(0, newLimit ?? DEFAULT_NEW_LIMIT)
     .map((w) => ({

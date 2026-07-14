@@ -144,6 +144,10 @@ export class SupabaseAdapter implements StorageAdapter {
     }))[0];
   }
 
+  listUnitProgress(profileId: string): Promise<UnitProgress[]> {
+    return this.rows('unit_progress', { profile_id: profileId });
+  }
+
   async saveUnitProgress(p: UnitProgress): Promise<void> {
     const { error } = await supabase.from('unit_progress')
       .upsert(toSnakeRow(p), { onConflict: 'profile_id,unit_id' });

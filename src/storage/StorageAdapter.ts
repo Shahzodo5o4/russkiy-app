@@ -64,6 +64,7 @@ export interface StorageAdapter {
   saveCardState(card: CardState): Promise<void>;
 
   getUnitProgress(profileId: string, unitId: string): Promise<UnitProgress | undefined>;
+  listUnitProgress(profileId: string): Promise<UnitProgress[]>;
   saveUnitProgress(progress: UnitProgress): Promise<void>;
 
   listSpeakingLogs(profileId: string): Promise<SpeakingLogMeta[]>;

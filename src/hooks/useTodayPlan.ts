@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { storage } from '../storage';
 import { dateKey, endOfToday } from '../lib/date';
 import { computeStreak } from '../lib/streak';
-import { DEFAULT_NEW_LIMIT, DEFAULT_REVIEW_LIMIT } from '../srs/queue';
+import { DEFAULT_NEW_LIMIT, DEFAULT_REVIEW_LIMIT, isUnlockedAsNew } from '../srs/queue';
 import type { Block, Unit } from '../types';
 
 export type TodayPlan = {
@@ -21,12 +21,13 @@ export function useTodayPlan(profileId: string) {
   const [plan, setPlan] = useState<TodayPlan | null>(null);
 
   const load = useCallback(async () => {
-    const [units, dueCards, states, words, stats] = await Promise.all([
+    const [units, dueCards, states, words, stats, progress] = await Promise.all([
       storage.getUnits(),
       storage.getDueCards(profileId, endOfToday(), DEFAULT_REVIEW_LIMIT),
       storage.getCardStates(profileId),
       storage.getWords(),
       storage.getDailyStats(profileId),
+      storage.listUnitProgress(profileId),
     ]);
 
     // Joriy dars: settings'dan; bo'lmasa — birinchi "ready" unit
@@ -39,8 +40,12 @@ export function useTodayPlan(profileId: string) {
     const started = new Set(
       states.filter((s) => s.direction === 'ru2uz').map((s) => s.wordId),
     );
+    // Yangi so'z faqat tugatilgan darsdan (yoki darssiz qo'lda qo'shilgan)
+    const finishedUnits = new Set(
+      progress.filter((p) => p.state === 'tugadi').map((p) => p.unitId),
+    );
     const fresh = Math.min(
-      words.filter((w) => !started.has(w.id)).length,
+      words.filter((w) => !started.has(w.id) && isUnlockedAsNew(w, finishedUnits)).length,
       DEFAULT_NEW_LIMIT,
     );
 

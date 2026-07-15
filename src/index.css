@@ -56,6 +56,9 @@ body {
 .md table { @apply border-collapse text-sm; }
 .md th, .md td { @apply border border-grid px-2 py-1.5 text-left align-top; }
 .md th { @apply bg-paper font-medium; }
+.md details { @apply mt-3 rounded-lg border border-grid bg-paper px-3 py-2; }
+.md summary { @apply cursor-pointer select-none font-medium; }
+.md details[open] summary { @apply mb-2; }
 
 @media (prefers-reduced-motion: reduce) {
   *,

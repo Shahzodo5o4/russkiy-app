@@ -127,16 +127,27 @@ export default function TodayScreen() {
           </p>
         </Link>
 
-        {/* Test */}
-        <Link to="/quiz" className="rounded border border-grid bg-white p-4 hover:border-ink">
-          <div className="flex items-center justify-between">
-            <span className="font-medium">Test (ixtiyoriy)</span>
-            <span className="text-sm text-muted">RU→UZ · yozish · diktant</span>
-          </div>
-          <p className="mt-1 text-sm text-muted">
-            Sherik bilan bir-biringizni tekshiring — dars bo'yicha filtr bor
-          </p>
-        </Link>
+        {/* Test va imtihon */}
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link to="/quiz" className="rounded border border-grid bg-white p-4 hover:border-ink">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">Test (ixtiyoriy)</span>
+              <span className="text-sm text-muted">so'zlar</span>
+            </div>
+            <p className="mt-1 text-sm text-muted">
+              RU→UZ · yozish · diktant — sherik bilan tekshirish
+            </p>
+          </Link>
+          <Link to="/exam" className="rounded border border-grid bg-white p-4 hover:border-ink">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">🎓 Imtihon</span>
+              <span className="text-sm text-muted">grammatika</span>
+            </div>
+            <p className="mt-1 text-sm text-muted">
+              Umumiy takrorlash — zaif mavzular hisoboti bilan
+            </p>
+          </Link>
+        </div>
       </div>
     </div>
   );

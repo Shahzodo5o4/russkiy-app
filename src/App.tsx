@@ -6,6 +6,7 @@ import TodayScreen from './features/today/TodayScreen';
 import ReviewScreen from './features/review/ReviewScreen';
 import GrammarReviewScreen from './features/grammar/GrammarReviewScreen';
 import QuizScreen from './features/quiz/QuizScreen';
+import ExamScreen from './features/exam/ExamScreen';
 import UnitScreen from './features/unit/UnitScreen';
 import RulesScreen from './features/rules/RulesScreen';
 import SpeakScreen from './features/speak/SpeakScreen';
@@ -30,6 +31,7 @@ export default function App() {
               <Route path="review" element={<ReviewScreen />} />
               <Route path="grammar" element={<GrammarReviewScreen />} />
               <Route path="quiz" element={<QuizScreen />} />
+              <Route path="exam" element={<ExamScreen />} />
               <Route path="unit/:id" element={<UnitScreen />} />
               <Route path="rules" element={<RulesScreen />} />
               <Route path="speak" element={<SpeakScreen />} />

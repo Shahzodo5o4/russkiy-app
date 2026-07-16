@@ -10,6 +10,8 @@ export type TodayPlan = {
   due: number;
   fresh: number;
   grammarDue: number; // muddati kelgan grammatika savollari
+  examSuggest: boolean; // imtihon vaqti keldi (oxirgi imtihondan beri N dars tugadi)
+  examNew: number; // oxirgi imtihondan beri tugatilgan darslar soni
   unit: Unit | null;          // joriy dars (QO'LDA tanlanadi)
   units: Unit[];
   blocks: Block[];
@@ -61,11 +63,28 @@ export function useTodayPlan(profileId: string) {
 
     const today = stats.find((s) => s.date === dateKey());
 
+    // Imtihon eslatmasi: oxirgi imtihondan beri tugatilgan darslar soni
+    // darajaga qarab chegaradan oshsa (A1: 5, A2: 4, B1: 3)
+    const finishedCount = finishedUnits.size;
+    const checkpoint =
+      (await storage.getSetting<number>(`examCheckpoint:${profileId}`)) ?? 0;
+    const maxOrder = Math.max(
+      0,
+      ...progress
+        .filter((p) => p.state === 'tugadi')
+        .map((p) => units.find((u) => u.id === p.unitId)?.order ?? 0),
+    );
+    const level = units.find((u) => u.order === maxOrder)?.level ?? 'A1';
+    const examEvery = level === 'B1' ? 3 : level === 'A2' ? 4 : 5;
+    const examNew = Math.max(0, finishedCount - checkpoint);
+
     setPlan({
       streak: computeStreak(stats),
       due: dueCards.length,
       fresh,
       grammarDue: dueQuiz.length,
+      examSuggest: examNew >= examEvery,
+      examNew,
       unit,
       units,
       blocks,

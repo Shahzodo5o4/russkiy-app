@@ -86,6 +86,12 @@ export default function ExamScreen() {
     await storage.saveQuizState(sm2(prev, ok ? 4 : 0));
   }
 
+  async function finishExam() {
+    setStage('done');
+    // eslatma hisoblagichi nollanadi: shu paytdagi tugatilgan darslar soni
+    await storage.setSetting(`examCheckpoint:${profile.id}`, finishedUnits.size);
+  }
+
   if (stage === 'run') {
     return (
       <div className="mx-auto max-w-md">
@@ -94,7 +100,7 @@ export default function ExamScreen() {
           key={order[index].id}
           question={order[index]}
           onAnswer={(ok) => void answer(ok)}
-          onNext={() => (index + 1 >= order.length ? setStage('done') : setIndex(index + 1))}
+          onNext={() => (index + 1 >= order.length ? void finishExam() : setIndex(index + 1))}
         />
       </div>
     );

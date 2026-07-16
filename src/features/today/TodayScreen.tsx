@@ -138,13 +138,20 @@ export default function TodayScreen() {
               RU→UZ · yozish · diktant — sherik bilan tekshirish
             </p>
           </Link>
-          <Link to="/exam" className="rounded border border-grid bg-white p-4 hover:border-ink">
+          <Link to="/exam"
+            className={`rounded border bg-white p-4 hover:border-ink ${
+              plan.examSuggest ? 'border-ink' : 'border-grid'
+            }`}>
             <div className="flex items-center justify-between">
-              <span className="font-medium">🎓 Imtihon</span>
+              <span className="font-medium">
+                🎓 Imtihon {plan.examSuggest && '❗'}
+              </span>
               <span className="text-sm text-muted">grammatika</span>
             </div>
             <p className="mt-1 text-sm text-muted">
-              Umumiy takrorlash — zaif mavzular hisoboti bilan
+              {plan.examSuggest
+                ? `Vaqti keldi — ${plan.examNew} ta yangi dars yig'ildi!`
+                : 'Umumiy takrorlash — zaif mavzular hisoboti bilan'}
             </p>
           </Link>
         </div>

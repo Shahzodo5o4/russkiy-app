@@ -6,8 +6,8 @@ import type {
   StorageAdapter,
 } from './StorageAdapter';
 import type {
-  Block, Book, CardState, DailyStat, Deck, Profile, Resource, Rule,
-  Unit, UnitProgress, Word,
+  Block, Book, CardState, DailyStat, Deck, Profile, QuizQuestion, QuizState,
+  Resource, Rule, Unit, UnitProgress, Word,
 } from '../types';
 
 const BUCKET = 'audio';
@@ -79,6 +79,19 @@ export class SupabaseAdapter implements StorageAdapter {
   }
   deleteWord(id: string): Promise<void> { return this.remove('words', id); }
 
+  // ---- grammatika savollari ----
+  getQuizQuestions(): Promise<QuizQuestion[]> {
+    return this.rows('quiz_questions', undefined, 'created_at');
+  }
+  getQuizQuestionsByUnit(unitId: string): Promise<QuizQuestion[]> {
+    return this.rows('quiz_questions', { unit_id: unitId }, 'created_at');
+  }
+  async saveQuizQuestions(questions: QuizQuestion[]): Promise<void> {
+    const { error } = await supabase.from('quiz_questions').upsert(questions.map(toSnakeRow));
+    if (error) fail('upsert quiz_questions', error.message);
+  }
+  deleteQuizQuestion(id: string): Promise<void> { return this.remove('quiz_questions', id); }
+
   // ---- audio ----
   private audioPath(meta: AudioAssetMeta): string {
     return `units/${meta.unitId}/${meta.id}.mp3`;
@@ -137,6 +150,21 @@ export class SupabaseAdapter implements StorageAdapter {
   }
 
   saveCardState(card: CardState): Promise<void> { return this.upsert('card_states', card); }
+
+  getQuizStates(profileId: string): Promise<QuizState[]> {
+    return this.rows('quiz_states', { profile_id: profileId });
+  }
+
+  async getDueQuizStates(profileId: string, before: number, limit: number): Promise<QuizState[]> {
+    const { data, error } = await supabase
+      .from('quiz_states').select('*')
+      .eq('profile_id', profileId).lte('due_at', before)
+      .order('due_at', { ascending: true }).limit(limit);
+    if (error) fail('select due quiz states', error.message);
+    return (data ?? []).map((r) => toCamelRow<QuizState>(r));
+  }
+
+  saveQuizState(state: QuizState): Promise<void> { return this.upsert('quiz_states', state); }
 
   async getUnitProgress(profileId: string, unitId: string): Promise<UnitProgress | undefined> {
     return (await this.rows<UnitProgress>('unit_progress', {

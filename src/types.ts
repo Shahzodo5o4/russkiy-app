@@ -88,6 +88,18 @@ export type Word = {
   createdAt: number;
 };
 
+/** Grammatika test savoli — dars bilan birga import qilinadi. */
+export type QuizQuestion = {
+  id: string; // "u09-q01"
+  unitId: string;
+  type: 'mcq' | 'tf';
+  prompt: string; // ruscha, urg'ular bilan; tf'da — hukm qilinadigan gap
+  options: string[]; // mcq: 3–4 variant; tf: bo'sh (UI To'g'ri/Noto'g'ri chiqaradi)
+  correctIndex: number; // mcq: options indeksi; tf: 0 = To'g'ri, 1 = Noto'g'ri
+  explanation?: string; // qisqa o'zbekcha izoh (javobdan keyin)
+  createdAt: number;
+};
+
 // ---------- PROGRESS (har profilda ALOHIDA) ----------
 
 export type Profile = {
@@ -111,6 +123,18 @@ export type CardState = {
   interval: number; // kunlarda
   repetitions: number;
   dueAt: number; // timestamp
+  lapses: number;
+};
+
+/** Grammatika savoli SM-2 holati (binar: to'g'ri/xato). */
+export type QuizState = {
+  id: string; // `${profileId}:${questionId}`
+  profileId: string;
+  questionId: string;
+  ease: number;
+  interval: number;
+  repetitions: number;
+  dueAt: number;
   lapses: number;
 };
 

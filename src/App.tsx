@@ -4,6 +4,7 @@ import { ProfileProvider } from './store/ProfileContext';
 import Layout from './app/Layout';
 import TodayScreen from './features/today/TodayScreen';
 import ReviewScreen from './features/review/ReviewScreen';
+import GrammarReviewScreen from './features/grammar/GrammarReviewScreen';
 import QuizScreen from './features/quiz/QuizScreen';
 import UnitScreen from './features/unit/UnitScreen';
 import RulesScreen from './features/rules/RulesScreen';
@@ -27,6 +28,7 @@ export default function App() {
             <Route element={<Layout />}>
               <Route index element={<TodayScreen />} />
               <Route path="review" element={<ReviewScreen />} />
+              <Route path="grammar" element={<GrammarReviewScreen />} />
               <Route path="quiz" element={<QuizScreen />} />
               <Route path="unit/:id" element={<UnitScreen />} />
               <Route path="rules" element={<RulesScreen />} />

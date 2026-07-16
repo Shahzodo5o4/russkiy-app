@@ -48,6 +48,20 @@ export default function TodayScreen() {
           </p>
         </Link>
 
+        {/* GRAMMATIKA — muddati kelgan savollar bo'lsa */}
+        {plan.grammarDue > 0 && (
+          <Link to="/grammar"
+            className="rounded border border-grid bg-white p-4 hover:border-ink">
+            <div className="flex items-center justify-between">
+              <span className="font-medium">📝 Grammatika</span>
+              <span className="text-sm text-muted">{plan.grammarDue} savol</span>
+            </div>
+            <p className="mt-1 text-sm text-muted">
+              Muddati kelgan grammatika savollarini takrorlang
+            </p>
+          </Link>
+        )}
+
         {/* 2 · DARS — joriy (qo'lda tanlanadi) */}
         {plan.unit ? (
           <div className={`rounded border bg-white p-4 ${

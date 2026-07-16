@@ -9,6 +9,7 @@ import BlockView from './BlockView';
 import RulePanel from './RulePanel';
 import SelectionPopover from './SelectionPopover';
 import QuickAddWord from './QuickAddWord';
+import UnitQuizPanel from './UnitQuizPanel';
 import type { Block, Book, Resource, Rule, Unit, UnitProgress } from '../../types';
 
 /** Dars sahifasi: bloklar + YouTube + qoida paneli + select-popover. */
@@ -95,6 +96,7 @@ export default function UnitScreen() {
                 <BlockView key={b.id} block={b} bookTitle={bookTitle(b)}
                   done={done.includes(b.id)} onToggle={() => void toggleBlock(b.id)} />
               ))}
+              <UnitQuizPanel unitId={unit.id} />
               {resources.map((r) => {
                 const vid = youtubeId(r.youtubeUrl);
                 return vid ? (

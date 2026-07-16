@@ -89,6 +89,18 @@ create table if not exists words (
 create index if not exists words_unit on words (unit_id);
 create index if not exists words_ru on words (ru);
 
+create table if not exists quiz_questions (
+  id            text primary key,
+  unit_id       text not null references units(id) on delete cascade,
+  type          text not null check (type in ('mcq','tf')),
+  prompt        text not null,
+  options       text[] not null default '{}',
+  correct_index int  not null default 0,
+  explanation   text,
+  created_at    bigint not null default 0
+);
+create index if not exists quiz_questions_unit on quiz_questions (unit_id);
+
 -- ---------- PROFIL VA PROGRESS ----------
 
 create table if not exists profiles (
@@ -115,6 +127,19 @@ create table if not exists card_states (
 create index if not exists card_states_due on card_states (profile_id, due_at);
 create unique index if not exists card_states_word_dir
   on card_states (profile_id, word_id, direction);
+
+create table if not exists quiz_states (
+  id          text primary key,
+  profile_id  text not null references profiles(id) on delete cascade,
+  question_id text not null references quiz_questions(id) on delete cascade,
+  ease        double precision not null default 2.5,
+  "interval"  double precision not null default 0,
+  repetitions int not null default 0,
+  due_at      bigint not null default 0,
+  lapses      int not null default 0
+);
+create index if not exists quiz_states_due on quiz_states (profile_id, due_at);
+create unique index if not exists quiz_states_q on quiz_states (profile_id, question_id);
 
 create table if not exists unit_progress (
   profile_id  text not null references profiles(id) on delete cascade,
@@ -159,7 +184,7 @@ begin
   foreach t in array array[
     'books','units','blocks','resources','audio_assets','rules','decks',
     'words','profiles','card_states','unit_progress','speaking_logs',
-    'daily_stats','settings'
+    'daily_stats','settings','quiz_questions','quiz_states'
   ] loop
     execute format('alter table %I enable row level security', t);
     begin

@@ -3,8 +3,8 @@ import type {
   AudioAssetMeta, SpeakingLogMeta, StorageAdapter,
 } from './StorageAdapter';
 import type {
-  Block, Book, CardState, DailyStat, Deck, Profile, Resource, Rule,
-  Unit, UnitProgress, Word,
+  Block, Book, CardState, DailyStat, Deck, Profile, QuizQuestion, QuizState,
+  Resource, Rule, Unit, UnitProgress, Word,
 } from '../types';
 
 /**
@@ -46,6 +46,18 @@ export class LocalAdapter implements StorageAdapter {
   async saveWords(words: Word[]): Promise<void> { await db.words.bulkPut(words); }
   async deleteWord(id: string): Promise<void> { await db.words.delete(id); }
 
+  // ---- grammatika savollari ----
+  getQuizQuestions(): Promise<QuizQuestion[]> {
+    return db.quizQuestions.orderBy('createdAt').toArray();
+  }
+  getQuizQuestionsByUnit(unitId: string): Promise<QuizQuestion[]> {
+    return db.quizQuestions.where({ unitId }).sortBy('createdAt');
+  }
+  async saveQuizQuestions(questions: QuizQuestion[]): Promise<void> {
+    await db.quizQuestions.bulkPut(questions);
+  }
+  async deleteQuizQuestion(id: string): Promise<void> { await db.quizQuestions.delete(id); }
+
   // ---- audio ----
   async listAudioAssets(unitId: string): Promise<AudioAssetMeta[]> {
     const assets = await db.audioAssets.where({ unitId }).toArray();
@@ -71,6 +83,15 @@ export class LocalAdapter implements StorageAdapter {
       .between([profileId, 0], [profileId, before]).limit(limit).toArray();
   }
   async saveCardState(card: CardState): Promise<void> { await db.cardStates.put(card); }
+
+  getQuizStates(profileId: string): Promise<QuizState[]> {
+    return db.quizStates.where({ profileId }).toArray();
+  }
+  getDueQuizStates(profileId: string, before: number, limit: number): Promise<QuizState[]> {
+    return db.quizStates.where('[profileId+dueAt]')
+      .between([profileId, 0], [profileId, before]).limit(limit).toArray();
+  }
+  async saveQuizState(state: QuizState): Promise<void> { await db.quizStates.put(state); }
 
   getUnitProgress(profileId: string, unitId: string): Promise<UnitProgress | undefined> {
     return db.unitProgress.get([profileId, unitId]);

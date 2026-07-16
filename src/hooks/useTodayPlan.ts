@@ -9,6 +9,7 @@ export type TodayPlan = {
   streak: number;
   due: number;
   fresh: number;
+  grammarDue: number; // muddati kelgan grammatika savollari
   unit: Unit | null;          // joriy dars (QO'LDA tanlanadi)
   units: Unit[];
   blocks: Block[];
@@ -21,13 +22,14 @@ export function useTodayPlan(profileId: string) {
   const [plan, setPlan] = useState<TodayPlan | null>(null);
 
   const load = useCallback(async () => {
-    const [units, dueCards, states, words, stats, progress] = await Promise.all([
+    const [units, dueCards, states, words, stats, progress, dueQuiz] = await Promise.all([
       storage.getUnits(),
       storage.getDueCards(profileId, endOfToday(), DEFAULT_REVIEW_LIMIT),
       storage.getCardStates(profileId),
       storage.getWords(),
       storage.getDailyStats(profileId),
       storage.listUnitProgress(profileId),
+      storage.getDueQuizStates(profileId, endOfToday(), 999),
     ]);
 
     // Joriy dars: settings'dan; bo'lmasa — birinchi "ready" unit
@@ -63,6 +65,7 @@ export function useTodayPlan(profileId: string) {
       streak: computeStreak(stats),
       due: dueCards.length,
       fresh,
+      grammarDue: dueQuiz.length,
       unit,
       units,
       blocks,

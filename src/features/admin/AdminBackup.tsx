@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { storage } from '../../storage';
 import { dateKey } from '../../lib/date';
-import type { Block, Resource } from '../../types';
+import type { Block, QuizQuestion, Resource } from '../../types';
 
 type ContentDump = {
   version: 1;
   exportedAt: string;
   books: unknown[]; units: unknown[]; blocks: Block[]; resources: Resource[];
   rules: unknown[]; decks: unknown[]; words: unknown[];
+  quizzes?: QuizQuestion[]; // grammatika savollari (eski dumplarda yo'q)
 };
 
 function download(obj: unknown, name: string) {
@@ -37,6 +38,7 @@ export default function AdminBackup() {
       books: await storage.getBooks(), units, blocks, resources,
       rules: await storage.getRules(), decks: await storage.getDecks(),
       words: await storage.getWords(),
+      quizzes: await storage.getQuizQuestions(),
     };
     download(dump, `russkiy-content-${dateKey()}.json`);
     setStatus('Eksport tayyor ✓');
@@ -52,6 +54,7 @@ export default function AdminBackup() {
       for (const r of dump.rules as never[]) await storage.saveRule(r);
       for (const d of dump.decks as never[]) await storage.saveDeck(d);
       await storage.saveWords(dump.words as never[]);
+      if (dump.quizzes?.length) await storage.saveQuizQuestions(dump.quizzes);
       setStatus('Import tayyor ✓');
     } catch (e: unknown) {
       setStatus(`Xato: ${e instanceof Error ? e.message : String(e)}`);

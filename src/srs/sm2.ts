@@ -3,10 +3,19 @@ import type { CardState } from '../types';
 /** Baholash: 0 = Yana, 3 = Qiyin, 4 = Yaxshi, 5 = Oson */
 export type Quality = 0 | 3 | 4 | 5;
 
+/** SM-2 ishlaydigan minimal maydonlar — so'z kartasi ham, grammatika savoli ham. */
+export type SrsFields = {
+  ease: number;
+  interval: number;
+  repetitions: number;
+  dueAt: number;
+  lapses: number;
+};
+
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 /** SM-2 — spetsifikatsiya 5-bo'limdagi algoritm AYNAN. */
-export function sm2(card: CardState, quality: Quality): CardState {
+export function sm2<T extends SrsFields>(card: T, quality: Quality): T {
   let { ease, interval, repetitions, lapses } = card;
 
   if (quality < 3) {

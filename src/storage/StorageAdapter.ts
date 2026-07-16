@@ -6,6 +6,8 @@ import type {
   DailyStat,
   Deck,
   Profile,
+  QuizQuestion,
+  QuizState,
   Resource,
   Rule,
   SpeakingLog,
@@ -50,6 +52,12 @@ export interface StorageAdapter {
   saveWords(words: Word[]): Promise<void>;
   deleteWord(id: string): Promise<void>;
 
+  // ---- grammatika savollari ----
+  getQuizQuestions(): Promise<QuizQuestion[]>;
+  getQuizQuestionsByUnit(unitId: string): Promise<QuizQuestion[]>;
+  saveQuizQuestions(questions: QuizQuestion[]): Promise<void>;
+  deleteQuizQuestion(id: string): Promise<void>;
+
   // ---- audio (blob → private storage) ----
   listAudioAssets(unitId: string): Promise<AudioAssetMeta[]>;
   saveAudioAsset(meta: AudioAssetMeta, blob: Blob): Promise<void>;
@@ -62,6 +70,10 @@ export interface StorageAdapter {
   getCardStates(profileId: string): Promise<CardState[]>;
   getDueCards(profileId: string, before: number, limit: number): Promise<CardState[]>;
   saveCardState(card: CardState): Promise<void>;
+
+  getQuizStates(profileId: string): Promise<QuizState[]>;
+  getDueQuizStates(profileId: string, before: number, limit: number): Promise<QuizState[]>;
+  saveQuizState(state: QuizState): Promise<void>;
 
   getUnitProgress(profileId: string, unitId: string): Promise<UnitProgress | undefined>;
   listUnitProgress(profileId: string): Promise<UnitProgress[]>;

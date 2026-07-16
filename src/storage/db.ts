@@ -1,7 +1,8 @@
 import Dexie, { type Table } from 'dexie';
 import type {
   AudioAsset, Block, Book, CardState, DailyStat, Deck, Profile,
-  Resource, Rule, SpeakingLog, Unit, UnitProgress, Word,
+  QuizQuestion, QuizState, Resource, Rule, SpeakingLog, Unit,
+  UnitProgress, Word,
 } from '../types';
 
 type SettingRow = { key: string; value: unknown };
@@ -22,6 +23,8 @@ export class RusskiyDB extends Dexie {
   speakingLogs!: Table<SpeakingLog, string>;
   dailyStats!: Table<DailyStat, [string, string]>;
   settings!: Table<SettingRow, string>;
+  quizQuestions!: Table<QuizQuestion, string>;
+  quizStates!: Table<QuizState, string>;
 
   constructor() {
     super('russkiy');
@@ -40,6 +43,10 @@ export class RusskiyDB extends Dexie {
       speakingLogs: 'id, profileId, unitId, createdAt',
       dailyStats: '[profileId+date], profileId, date',
       settings: 'key',
+    });
+    this.version(2).stores({
+      quizQuestions: 'id, unitId, createdAt',
+      quizStates: 'id, profileId, [profileId+dueAt]',
     });
   }
 }

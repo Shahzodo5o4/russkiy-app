@@ -28,7 +28,8 @@ export default function UnitQuizPanel({ unitId }: { unitId: string }) {
       storage.getQuizQuestionsByUnit(unitId),
       storage.getQuizStates(profile.id),
     ]).then(([qs, sts]) => {
-      setQuestions(qs);
+      // imtihon zaxirasi (exam=true) dars testida chiqmaydi
+      setQuestions(qs.filter((q) => !q.exam));
       setStates(new Map(sts.map((s) => [s.questionId, s])));
     });
   }, [unitId, profile.id]);

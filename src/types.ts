@@ -97,6 +97,8 @@ export type QuizQuestion = {
   options: string[]; // mcq: 3–4 variant; tf: bo'sh (UI To'g'ri/Noto'g'ri chiqaradi)
   correctIndex: number; // mcq: options indeksi; tf: 0 = To'g'ri, 1 = Noto'g'ri
   explanation?: string; // qisqa o'zbekcha izoh (javobdan keyin)
+  /** true — imtihon zaxirasi: dars testida chiqmaydi, imtihonda birinchi tanlanadi */
+  exam?: boolean;
   createdAt: number;
 };
 

@@ -12,13 +12,26 @@ import type { QuizQuestion } from '../../types';
 
 type Stage = 'setup' | 'run' | 'done';
 
-/** Har darsdan teng qamrov bilan savol terish (round-robin), keyin aralashtirish. */
-function pickBalanced(questions: QuizQuestion[], count: number): QuizQuestion[] {
+/**
+ * Har darsdan teng qamrov bilan savol terish (round-robin).
+ * Ustuvorlik: hali YECHILMAGAN imtihon-zaxira savollari → yechilmagan dars
+ * savollari → yechilganlar. Shunda imtihon iloji boricha yangi savollardan tuziladi.
+ */
+function pickBalanced(
+  questions: QuizQuestion[],
+  count: number,
+  answeredIds: Set<string>,
+): QuizQuestion[] {
+  const score = (q: QuizQuestion) =>
+    (answeredIds.has(q.id) ? 0 : 2) + (q.exam ? 1 : 0);
   const byUnit = new Map<string, QuizQuestion[]>();
   for (const q of questions) {
     byUnit.set(q.unitId, [...(byUnit.get(q.unitId) ?? []), q]);
   }
-  const pools = [...byUnit.values()].map((p) => shuffle(p));
+  // pop() oxiridan oladi — eng yuqori ball oxirida tursin
+  const pools = [...byUnit.values()].map((p) =>
+    shuffle(p).sort((a, b) => score(a) - score(b)),
+  );
   const out: QuizQuestion[] = [];
   let i = 0;
   while (out.length < count && pools.some((p) => p.length > 0)) {
@@ -34,7 +47,12 @@ function pickBalanced(questions: QuizQuestion[], count: number): QuizQuestion[] 
 export default function ExamScreen() {
   const { profile } = useProfile();
   const data = useAsync(
-    () => Promise.all([storage.getQuizQuestions(), storage.getUnits(), storage.getQuizStates(profile.id)]),
+    () => Promise.all([
+      storage.getQuizQuestions(),
+      storage.getUnits(),
+      storage.getQuizStates(profile.id),
+      storage.listUnitProgress(profile.id),
+    ]),
     [profile.id],
   );
   const [count, setCount] = useState(20);
@@ -43,16 +61,20 @@ export default function ExamScreen() {
   const [index, setIndex] = useState(0);
   const [wrongIds, setWrongIds] = useState<Set<string>>(new Set());
 
-  const [questions, units, states] = data.data ?? [[], [], []];
+  const [questions, units, states, progress] = data.data ?? [[], [], [], []];
 
-  // Faqat bankka tushgan (dars testi yechilgan) darslar — hali o'tilmaganlari chiqmaydi
-  const startedUnits = useMemo(() => {
-    const qUnit = new Map(questions.map((q) => [q.id, q.unitId]));
-    return new Set(states.map((s) => qUnit.get(s.questionId)).filter(Boolean));
-  }, [states, questions]);
+  // Imtihonga faqat TUGATILGAN darslar kiradi
+  const finishedUnits = useMemo(
+    () => new Set(progress.filter((p) => p.state === 'tugadi').map((p) => p.unitId)),
+    [progress],
+  );
   const pool = useMemo(
-    () => questions.filter((q) => startedUnits.has(q.unitId)),
-    [questions, startedUnits],
+    () => questions.filter((q) => finishedUnits.has(q.unitId)),
+    [questions, finishedUnits],
+  );
+  const answeredIds = useMemo(
+    () => new Set(states.map((s) => s.questionId)),
+    [states],
   );
 
   if (data.loading) return <p className="text-muted">Yuklanmoqda…</p>;
@@ -92,8 +114,9 @@ export default function ExamScreen() {
   return (
     <Screen title="🎓 Imtihon" subtitle="Umumiy takrorlash — barcha o'tilgan darslardan aralash savollar">
       <p className="text-sm text-muted">
-        Savollar har darsdan teng olinadi. Natijada qaysi mavzu zaifligi ko'rinadi;
-        xatolar takrorlash bankida tezlashadi. Tavsiya: A1 yakunida, keyin har 4–5 darsda.
+        Savollar faqat <b>tugatilgan darslardan</b>, har biridan teng olinadi — avval siz hali
+        ko'rmagan savollar. Natijada qaysi mavzu zaifligi ko'rinadi; xatolar takrorlash bankida
+        tezlashadi. Tavsiya: A1 yakunida, keyin har 4–5 darsda.
       </p>
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
         <select className="rounded border border-grid bg-white px-2 py-2 text-sm"
@@ -106,13 +129,13 @@ export default function ExamScreen() {
       </div>
       {pool.length === 0 && (
         <p className="mt-3 rounded border border-grid bg-paper px-3 py-2 text-sm">
-          Imtihon uchun avval kamida bitta darsning «📝 Dars testi»ni yeching —
-          savollar shundan keyin bankka tushadi.
+          Imtihon uchun avval kamida bitta darsni tugating (dars sahifasida barcha
+          bloklarni ✓ belgilang).
         </p>
       )}
       <button
         disabled={pool.length === 0}
-        onClick={() => { setOrder(pickBalanced(pool, count)); setIndex(0); setStage('run'); }}
+        onClick={() => { setOrder(pickBalanced(pool, count, answeredIds)); setIndex(0); setStage('run'); }}
         className="mt-3 w-full rounded bg-ink py-2.5 font-medium text-paper disabled:opacity-40"
       >
         Boshlash

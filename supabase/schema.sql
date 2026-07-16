@@ -100,6 +100,7 @@ create table if not exists quiz_questions (
   created_at    bigint not null default 0
 );
 create index if not exists quiz_questions_unit on quiz_questions (unit_id);
+alter table quiz_questions add column if not exists exam boolean not null default false;
 
 -- ---------- PROFIL VA PROGRESS ----------
 

@@ -87,7 +87,10 @@ export class SupabaseAdapter implements StorageAdapter {
     return this.rows('quiz_questions', { unit_id: unitId }, 'created_at');
   }
   async saveQuizQuestions(questions: QuizQuestion[]): Promise<void> {
-    const { error } = await supabase.from('quiz_questions').upsert(questions.map(toSnakeRow));
+    // exam maydoni hamma qatorda aniq bo'lsin — aks holda aralash to'plamda
+    // PostgREST yo'q maydonni null qilib yuboradi (not-null xatosi)
+    const rows = questions.map((q) => toSnakeRow({ ...q, exam: q.exam ?? false }));
+    const { error } = await supabase.from('quiz_questions').upsert(rows);
     if (error) fail('upsert quiz_questions', error.message);
   }
   deleteQuizQuestion(id: string): Promise<void> { return this.remove('quiz_questions', id); }

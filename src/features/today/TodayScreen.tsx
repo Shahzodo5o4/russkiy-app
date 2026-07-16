@@ -150,8 +150,8 @@ export default function TodayScreen() {
             </div>
             <p className="mt-1 text-sm text-muted">
               {plan.examSuggest
-                ? `Vaqti keldi — ${plan.examNew} ta yangi dars yig'ildi!`
-                : 'Umumiy takrorlash — zaif mavzular hisoboti bilan'}
+                ? `Ochildi — ${plan.examNew} ta yangi dars yig'ildi!`
+                : `🔒 Qulflangan — ochilishiga yana ${plan.examRemaining} ta dars`}
             </p>
           </Link>
         </div>

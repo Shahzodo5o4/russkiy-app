@@ -5,6 +5,7 @@ import { useProfile } from '../../store/ProfileContext';
 import { useAsync } from '../../hooks/useAsync';
 import { sm2 } from '../../srs/sm2';
 import { freshQuizState } from '../../srs/quizQueue';
+import { examGate } from '../../lib/examGate';
 import { shuffle } from '../../lib/shuffle';
 import QuestionCard from '../grammar/QuestionCard';
 import ExamResult from './ExamResult';
@@ -52,6 +53,7 @@ export default function ExamScreen() {
       storage.getUnits(),
       storage.getQuizStates(profile.id),
       storage.listUnitProgress(profile.id),
+      storage.getSetting<number>(`examCheckpoint:${profile.id}`),
     ]),
     [profile.id],
   );
@@ -61,7 +63,9 @@ export default function ExamScreen() {
   const [index, setIndex] = useState(0);
   const [wrongIds, setWrongIds] = useState<Set<string>>(new Set());
 
-  const [questions, units, states, progress] = data.data ?? [[], [], [], []];
+  const [questions, units, states, progress, checkpoint] =
+    data.data ?? [[], [], [], [], undefined];
+  const gate = examGate(units, progress, checkpoint ?? 0);
 
   // Imtihonga faqat TUGATILGAN darslar kiradi
   const finishedUnits = useMemo(
@@ -133,18 +137,19 @@ export default function ExamScreen() {
         </select>
         <p className="self-center text-sm text-muted">{pool.length} ta savol mavjud</p>
       </div>
-      {pool.length === 0 && (
+      {!gate.ready && (
         <p className="mt-3 rounded border border-grid bg-paper px-3 py-2 text-sm">
-          Imtihon uchun avval kamida bitta darsni tugating (dars sahifasida barcha
-          bloklarni ✓ belgilang).
+          🔒 Imtihon hali qulflangan: oxirgi imtihondan beri {gate.fresh} ta dars
+          tugatildi, kerak — {gate.needed} ta (yana {gate.remaining} ta dars tugating).
+          Hozircha har darsning «📝 Dars testi» va kunlik «Grammatika» takrorlash yetarli.
         </p>
       )}
       <button
-        disabled={pool.length === 0}
+        disabled={!gate.ready || pool.length === 0}
         onClick={() => { setOrder(pickBalanced(pool, count, answeredIds)); setIndex(0); setStage('run'); }}
         className="mt-3 w-full rounded bg-ink py-2.5 font-medium text-paper disabled:opacity-40"
       >
-        Boshlash
+        {gate.ready ? 'Boshlash' : `🔒 Yana ${gate.remaining} ta dars kerak`}
       </button>
     </Screen>
   );

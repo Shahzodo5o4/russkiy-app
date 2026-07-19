@@ -14,6 +14,9 @@ content/local/
 !.env.example
 !.env.production
 
+# ── OCR modeli (15MB binar, winget+curl bilan qayta yuklab olinadi) ──
+tools/tessdata/
+
 # ── Node / Vite ──
 node_modules/
 dist/

@@ -6,6 +6,9 @@ import { dateKey } from '../lib/date';
 
 type Phase = 'loading' | 'active' | 'done' | 'empty';
 
+/** Xato karta nechta kartadan keyin qayta chiqadi (Anki learning-step uslubi). */
+const RELEARN_GAP = 4;
+
 /** SRS sessiyasi: navbat, baholash, learning queue, kunlik statistika. */
 export function useReviewSession(profileId: string) {
   const [items, setItems] = useState<ReviewItem[]>([]);
@@ -68,8 +71,11 @@ export function useReviewSession(profileId: string) {
 
       let next = items;
       if (quality < 3) {
-        // learning queue — sessiya oxirida qayta chiqadi
-        next = [...items, { ...item, card: updated, isNew: false }];
+        // learning queue — bir necha kartadan keyin qayta chiqadi,
+        // to'g'ri javob berilmaguncha sessiya tugamaydi
+        const at = Math.min(index + 1 + RELEARN_GAP, items.length);
+        next = [...items];
+        next.splice(at, 0, { ...item, card: updated, isNew: false, relearn: true });
         setItems(next);
       }
 

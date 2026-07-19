@@ -7,6 +7,7 @@ export type ReviewItem = {
   card: CardState;
   word: Word;
   isNew: boolean; // birinchi marta ko'rsatilayotgan so'z
+  relearn?: boolean; // shu sessiyada xato qilingan — qayta o'rganish
 };
 
 export const DEFAULT_NEW_LIMIT = 15;

@@ -15,7 +15,7 @@ export default function ReviewScreen() {
   const { profile } = useProfile();
   const s = useReviewSession(profile.id);
   const [flipped, setFlipped] = useState(false);
-  const [typed, setTyped] = useState(false); // uz2ru: javob tekshirildimi
+  const [typedOk, setTypedOk] = useState<boolean | null>(null); // uz2ru: javob natijasi
   const [autoTts, setAutoTts] = useState(true);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function ReviewScreen() {
   // Yangi karta ochilganda holatni tozalash + avto-o'qish
   useEffect(() => {
     setFlipped(false);
-    setTyped(false);
+    setTypedOk(null);
     if (current && current.card.direction === 'ru2uz' && autoTts) {
       speak(current.word.ru, 0.9);
     }
@@ -36,18 +36,26 @@ export default function ReviewScreen() {
 
   const grade = useCallback((q: Quality) => { void s.grade(q); }, [s]);
 
-  // Klaviatura: Space = ochish, 1-4 = baho
+  // Klaviatura: Space = ochish, 1-4 = baho (yozish rejimida javobdan keyin ham)
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
-      if (!current || current.card.direction === 'uz2ru') return;
-      if (e.code === 'Space') { e.preventDefault(); setFlipped(true); }
-      if (flipped && ['1', '2', '3', '4'].includes(e.key)) {
-        grade(([0, 3, 4, 5] as Quality[])[Number(e.key) - 1]);
+      if (!current) return;
+      const q = ([0, 3, 4, 5] as Quality[])['1234'.indexOf(e.key)];
+      if (current.card.direction === 'uz2ru') {
+        if (typedOk === null) return; // hali javob tekshirilmagan
+        if (typedOk === false) {
+          // xato yozilgan: 1 = Yana, 2 = Qiyin (typo istisnosi)
+          if (e.key === '1') grade(0);
+          if (e.key === '2') grade(3);
+        } else if (q !== undefined) grade(q);
+        return;
       }
+      if (e.code === 'Space') { e.preventDefault(); setFlipped(true); }
+      if (flipped && q !== undefined) grade(q);
     }
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [current, flipped, grade]);
+  }, [current, flipped, typedOk, grade]);
 
   if (s.phase === 'loading') return <p className="text-muted">Navbat tuzilmoqda…</p>;
 
@@ -86,7 +94,11 @@ export default function ReviewScreen() {
   return (
     <div className="mx-auto grid max-w-md gap-4">
       <div className="flex items-center justify-between text-sm text-muted">
-        <span>{s.index + 1} / {s.total}{current.isNew && ' · yangi so’z'}</span>
+        <span>
+          {s.index + 1} / {s.total}
+          {current.isNew && ' · yangi so’z'}
+          {current.relearn && <span className="text-miss"> · xato — qayta</span>}
+        </span>
         <button
           onClick={() => {
             const v = !autoTts;
@@ -113,8 +125,16 @@ export default function ReviewScreen() {
             key={current.card.id + s.index}
             expected={current.word.ru}
             expectedStressed={current.word.ruStressed}
-            onResult={() => setTyped(true)}
-            afterSlot={typed ? <GradeButtons card={current.card} onGrade={grade} /> : undefined}
+            onResult={setTypedOk}
+            afterSlot={
+              typedOk !== null ? (
+                <GradeButtons
+                  card={current.card}
+                  onGrade={grade}
+                  wrongTyped={typedOk === false}
+                />
+              ) : undefined
+            }
           />
         </div>
       ) : (

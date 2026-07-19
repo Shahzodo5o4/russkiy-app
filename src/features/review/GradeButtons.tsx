@@ -20,13 +20,37 @@ function preview(card: CardState, q: Quality): string {
 type Props = {
   card: CardState;
   onGrade: (q: Quality) => void;
+  /** uz2ru: javob noto'g'ri yozilgan — faqat «Yana» (typo istisnosi bilan) */
+  wrongTyped?: boolean;
 };
 
 /**
  * SRS baholash: tugma ostida — so'z KEYIN QACHON qayta chiqishi.
- * «Yana» — shu sessiya oxirida yana chiqadi. Klaviatura: 1–4.
+ * «Yana» — shu sessiyada bir necha kartadan keyin qayta chiqadi. Klaviatura: 1–4.
+ * wrongTyped'da o'zini yuqori baholash yopiq: xato javob = «Yana».
  */
-export default function GradeButtons({ card, onGrade }: Props) {
+export default function GradeButtons({ card, onGrade, wrongTyped }: Props) {
+  if (wrongTyped) {
+    return (
+      <div className="grid gap-2">
+        <button
+          onClick={() => onGrade(0)}
+          className="rounded border-2 border-miss bg-white py-2.5 text-sm font-medium text-miss"
+        >
+          Yana (1) — birozdan keyin qayta so'raladi
+          <span className="mt-0.5 block text-[11px] font-normal text-muted">
+            {preview(card, 0)}
+          </span>
+        </button>
+        <button
+          onClick={() => onGrade(3)}
+          className="text-xs text-muted underline"
+        >
+          Xato yozdim, aslida bilaman → «Qiyin» (2) · {preview(card, 3)}
+        </button>
+      </div>
+    );
+  }
   return (
     <div className="grid grid-cols-4 gap-2">
       {GRADES.map((g) => (
@@ -35,7 +59,7 @@ export default function GradeButtons({ card, onGrade }: Props) {
           onClick={() => onGrade(g.q)}
           className={`rounded border-2 bg-white py-2 text-sm font-medium ${g.cls}`}
         >
-          {g.label}
+          {g.label} <span className="font-normal text-muted">({g.key})</span>
           <span className="mt-0.5 block text-[11px] font-normal text-muted">
             {preview(card, g.q)}
           </span>

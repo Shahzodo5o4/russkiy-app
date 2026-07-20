@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { storage } from '../../storage';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 import type { Unit } from '../../types';
 
 type Row = { file: File; unitId: string; title: string };
@@ -33,6 +33,7 @@ export default function AdminAudio() {
   const [rows, setRows] = useState<Row[]>([]);
   const [progress, setProgress] = useState<string | null>(null);
   const labels = unitLabels(units);
+  const sortedUnits = sortUnits(units);
 
   useEffect(() => { storage.getUnits().then(setUnits); }, []);
 
@@ -87,7 +88,7 @@ export default function AdminAudio() {
                   onChange={(e) => setRow(i, { unitId: e.target.value })}
                 >
                   <option value="">— dars tanlang —</option>
-                  {units.map((u) => (
+                  {sortedUnits.map((u) => (
                     <option key={u.id} value={u.id}>{labels.get(u.id)?.badge} · {u.title}</option>
                   ))}
                 </select>

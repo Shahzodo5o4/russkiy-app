@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { storage } from '../../storage';
 import Markdown from '../../components/Markdown';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 import type { Rule, Unit } from '../../types';
 
 const CATEGORIES: Rule['category'][] = ['padej', "fe'l", 'ot', 'sifat', 'olmosh', 'boshqa'];
@@ -19,6 +19,7 @@ export default function RuleEditor() {
   const [rule, setRule] = useState<Rule | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
   const labels = unitLabels(units);
+  const sortedUnits = sortUnits(units);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -71,7 +72,7 @@ export default function RuleEditor() {
           <div className="text-sm text-muted">
             Qaysi darslarda kerak
             <div className="mt-1 flex max-h-28 flex-wrap gap-1 overflow-y-auto">
-              {units.map((u) => (
+              {sortedUnits.map((u) => (
                 <button key={u.id} type="button" onClick={() => toggleUnit(u.id)}
                   className={`rounded border px-2 py-0.5 font-mono text-sm ${
                     rule.unitIds.includes(u.id)

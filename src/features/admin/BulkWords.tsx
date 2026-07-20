@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { storage } from '../../storage';
 import { parseBulkWords, type ParsedWord } from '../../lib/bulkParse';
 import StressedText from '../../components/StressedText';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 import type { Deck, Unit, Word } from '../../types';
 
 const PLACEHOLDER = `молоко́ | sut | ot,n | Я пью молоко. | Men sut ichaman.
@@ -19,6 +19,7 @@ export default function BulkWords({ onSaved }: { onSaved: () => void }) {
   const [deckIds, setDeckIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const labels = unitLabels(units);
+  const sortedUnits = sortUnits(units);
 
   useEffect(() => {
     storage.getUnits().then(setUnits);
@@ -66,7 +67,7 @@ export default function BulkWords({ onSaved }: { onSaved: () => void }) {
           <select className="mt-1 w-full rounded border border-grid bg-white px-3 py-2"
             value={unitId} onChange={(e) => setUnitId(e.target.value)}>
             <option value="">—</option>
-            {units.map((u) => (
+            {sortedUnits.map((u) => (
               <option key={u.id} value={u.id}>{labels.get(u.id)?.badge} · {u.title}</option>
             ))}
           </select>

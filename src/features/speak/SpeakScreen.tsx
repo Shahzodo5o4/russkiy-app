@@ -5,7 +5,7 @@ import { useProfile } from '../../store/ProfileContext';
 import Shadowing from './Shadowing';
 import FreeSpeak from './FreeSpeak';
 import Recordings from './Recordings';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 import type { Unit } from '../../types';
 
 type Tab = 'shadow' | 'free' | 'recordings';
@@ -23,6 +23,7 @@ export default function SpeakScreen() {
   const [unitId, setUnitId] = useState('');
   const [tab, setTab] = useState<Tab>('shadow');
   const labels = useMemo(() => unitLabels(units), [units]);
+  const sortedUnits = useMemo(() => sortUnits(units), [units]);
 
   useEffect(() => {
     (async () => {
@@ -42,7 +43,7 @@ export default function SpeakScreen() {
       <div className="grid gap-3">
         <select className="rounded border border-grid bg-white px-2 py-2 text-sm"
           value={unitId} onChange={(e) => setUnitId(e.target.value)}>
-          {units.map((u) => (
+          {sortedUnits.map((u) => (
             <option key={u.id} value={u.id}>{labels.get(u.id)?.badge} · {u.title}</option>
           ))}
         </select>

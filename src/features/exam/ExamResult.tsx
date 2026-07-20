@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 import type { QuizQuestion, Unit } from '../../types';
 
 type Props = {
@@ -14,6 +14,7 @@ export default function ExamResult({ order, wrongIds, units, onRestart }: Props)
   const total = order.length;
   const ok = total - wrongIds.size;
   const labels = unitLabels(units);
+  const rank = new Map(sortUnits(units).map((u, i) => [u.id, i]));
 
   // dars bo'yicha guruhlash
   const byUnit = new Map<string, { ok: number; total: number }>();
@@ -30,7 +31,7 @@ export default function ExamResult({ order, wrongIds, units, onRestart }: Props)
       ...r,
       pct: r.ok / r.total,
     }))
-    .sort((a, b) => (a.unit?.order ?? 99) - (b.unit?.order ?? 99));
+    .sort((a, b) => (rank.get(a.unitId) ?? 99) - (rank.get(b.unitId) ?? 99));
 
   const weak = rows.filter((r) => r.pct < 0.7);
 

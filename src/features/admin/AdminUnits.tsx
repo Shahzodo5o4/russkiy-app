@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { storage } from '../../storage';
 import { useAsync } from '../../hooks/useAsync';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 
 /** Darslar ro'yxati — tahrirlash uchun. */
 export default function AdminUnits() {
@@ -13,10 +13,11 @@ export default function AdminUnits() {
   }
 
   const labels = unitLabels(units.data);
+  const sorted = sortUnits(units.data);
 
   return (
     <ul className="grid gap-1">
-      {units.data.map((u) => (
+      {sorted.map((u) => (
         <li key={u.id}>
           <Link
             to={u.id}

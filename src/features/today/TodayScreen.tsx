@@ -3,7 +3,7 @@ import { useProfile } from '../../store/ProfileContext';
 import { useTodayPlan } from '../../hooks/useTodayPlan';
 import { todayLabel } from '../../lib/date';
 import EmptyState from '../../components/EmptyState';
-import { unitLabels } from '../../lib/unitLabel';
+import { unitLabels, sortUnits } from '../../lib/unitLabel';
 
 /** Bugun — kunlik reja (spec 4.1): Takrorlash → Dars → Gapirish. */
 export default function TodayScreen() {
@@ -78,7 +78,7 @@ export default function TodayScreen() {
                 onChange={(e) => void pinUnit(e.target.value)}
                 title="Joriy darsni almashtirish"
               >
-                {plan.units.map((u) => (
+                {sortUnits(plan.units).map((u) => (
                   <option key={u.id} value={u.id}>
                     {labels.get(u.id)?.badge} · {u.title}{u.status === 'draft' ? ' (bo‘sh)' : ''}
                   </option>

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { storage } from '../../storage';
 import { useAsync } from '../../hooks/useAsync';
+import { unitLabels } from '../../lib/unitLabel';
 
 /** Darslar ro'yxati — tahrirlash uchun. */
 export default function AdminUnits() {
@@ -10,6 +11,8 @@ export default function AdminUnits() {
   if (units.error !== undefined || units.data === undefined) {
     return <p className="text-miss">{units.error}</p>;
   }
+
+  const labels = unitLabels(units.data);
 
   return (
     <ul className="grid gap-1">
@@ -21,7 +24,8 @@ export default function AdminUnits() {
           >
             <span>
               <span className="mr-2 font-mono text-sm text-muted">
-                {String(u.order).padStart(2, '0')}
+                {labels.get(u.id)?.badge}
+                <span className="ml-1 opacity-50">#{u.order}</span>
               </span>
               <span className="font-ru">{u.title}</span>
             </span>

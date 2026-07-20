@@ -10,6 +10,7 @@ import RulePanel from './RulePanel';
 import SelectionPopover from './SelectionPopover';
 import QuickAddWord from './QuickAddWord';
 import UnitQuizPanel from './UnitQuizPanel';
+import { unitBadge } from '../../lib/unitLabel';
 import type { Block, Book, Resource, Rule, Unit, UnitProgress } from '../../types';
 
 /** Dars sahifasi: bloklar + YouTube + qoida paneli + select-popover. */
@@ -17,6 +18,7 @@ export default function UnitScreen() {
   const { id } = useParams<{ id: string }>();
   const { profile } = useProfile();
   const [unit, setUnit] = useState<Unit | null>(null);
+  const [units, setUnits] = useState<Unit[]>([]);
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [resources, setResources] = useState<Resource[]>([]);
   const [rules, setRules] = useState<Rule[]>([]);
@@ -27,8 +29,9 @@ export default function UnitScreen() {
 
   const load = useCallback(async () => {
     if (!id) return;
-    const [u, bl, res, allRules, bks, prog] = await Promise.all([
+    const [u, all, bl, res, allRules, bks, prog] = await Promise.all([
       storage.getUnit(id),
+      storage.getUnits(),
       storage.getBlocks(id),
       storage.getResources(id),
       storage.getRules(),
@@ -36,6 +39,7 @@ export default function UnitScreen() {
       storage.getUnitProgress(profile.id, id),
     ]);
     setUnit(u ?? null);
+    setUnits(all);
     setBlocks(bl);
     setResources(res);
     setRules(allRules.filter((r) => r.unitIds.includes(id)));
@@ -70,7 +74,7 @@ export default function UnitScreen() {
   return (
     <div>
       <h1 className="text-xl font-semibold">
-        {unit.order}-dars: <span className="font-ru">{unit.title}</span>
+        {unitBadge(units, unit.id)}: <span className="font-ru">{unit.title}</span>
       </h1>
       <p className="mt-1 text-sm text-muted">
         {unit.topic} · {unit.grammarFocus}

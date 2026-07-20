@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { unitLabels } from '../../lib/unitLabel';
 import type { QuizQuestion, Unit } from '../../types';
 
 type Props = {
@@ -12,6 +13,7 @@ type Props = {
 export default function ExamResult({ order, wrongIds, units, onRestart }: Props) {
   const total = order.length;
   const ok = total - wrongIds.size;
+  const labels = unitLabels(units);
 
   // dars bo'yicha guruhlash
   const byUnit = new Map<string, { ok: number; total: number }>();
@@ -44,7 +46,7 @@ export default function ExamResult({ order, wrongIds, units, onRestart }: Props)
           {rows.map((r) => (
             <li key={r.unitId} className="flex items-center justify-between gap-2 text-sm">
               <span className="truncate">
-                {r.unit ? `${r.unit.order} · ` : ''}
+                {r.unit ? `${labels.get(r.unit.id)?.badge} · ` : ''}
                 <span className="font-ru">{r.unit?.title ?? r.unitId}</span>
               </span>
               <span className={r.pct < 0.7 ? 'font-medium text-miss' : 'text-muted'}>

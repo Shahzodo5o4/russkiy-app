@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Screen from '../../components/Screen';
 import { storage } from '../../storage';
 import { useProfile } from '../../store/ProfileContext';
 import Shadowing from './Shadowing';
 import FreeSpeak from './FreeSpeak';
 import Recordings from './Recordings';
+import { unitLabels } from '../../lib/unitLabel';
 import type { Unit } from '../../types';
 
 type Tab = 'shadow' | 'free' | 'recordings';
@@ -21,6 +22,7 @@ export default function SpeakScreen() {
   const [units, setUnits] = useState<Unit[]>([]);
   const [unitId, setUnitId] = useState('');
   const [tab, setTab] = useState<Tab>('shadow');
+  const labels = useMemo(() => unitLabels(units), [units]);
 
   useEffect(() => {
     (async () => {
@@ -41,7 +43,7 @@ export default function SpeakScreen() {
         <select className="rounded border border-grid bg-white px-2 py-2 text-sm"
           value={unitId} onChange={(e) => setUnitId(e.target.value)}>
           {units.map((u) => (
-            <option key={u.id} value={u.id}>{u.order} · {u.title}</option>
+            <option key={u.id} value={u.id}>{labels.get(u.id)?.badge} · {u.title}</option>
           ))}
         </select>
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { storage } from '../../storage';
 import Markdown from '../../components/Markdown';
+import { unitLabels } from '../../lib/unitLabel';
 import type { Rule, Unit } from '../../types';
 
 const CATEGORIES: Rule['category'][] = ['padej', "fe'l", 'ot', 'sifat', 'olmosh', 'boshqa'];
@@ -17,6 +18,7 @@ export default function RuleEditor() {
   const navigate = useNavigate();
   const [rule, setRule] = useState<Rule | null>(null);
   const [units, setUnits] = useState<Unit[]>([]);
+  const labels = unitLabels(units);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
@@ -75,7 +77,7 @@ export default function RuleEditor() {
                     rule.unitIds.includes(u.id)
                       ? 'border-ink bg-ink text-paper' : 'border-grid bg-white'
                   }`}>
-                  {u.order}
+                  {labels.get(u.id)?.badge}
                 </button>
               ))}
             </div>

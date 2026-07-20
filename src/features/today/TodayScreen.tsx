@@ -3,6 +3,7 @@ import { useProfile } from '../../store/ProfileContext';
 import { useTodayPlan } from '../../hooks/useTodayPlan';
 import { todayLabel } from '../../lib/date';
 import EmptyState from '../../components/EmptyState';
+import { unitLabels } from '../../lib/unitLabel';
 
 /** Bugun — kunlik reja (spec 4.1): Takrorlash → Dars → Gapirish. */
 export default function TodayScreen() {
@@ -10,6 +11,8 @@ export default function TodayScreen() {
   const { plan, pinUnit } = useTodayPlan(profile.id);
 
   if (!plan) return <p className="text-muted">Reja tuzilmoqda…</p>;
+
+  const labels = unitLabels(plan.units);
 
   const srsLeft = plan.due + plan.fresh;
   const srsDone = srsLeft === 0 && plan.reviewedToday > 0;
@@ -77,7 +80,7 @@ export default function TodayScreen() {
               >
                 {plan.units.map((u) => (
                   <option key={u.id} value={u.id}>
-                    {u.order} · {u.title}{u.status === 'draft' ? ' (bo‘sh)' : ''}
+                    {labels.get(u.id)?.badge} · {u.title}{u.status === 'draft' ? ' (bo‘sh)' : ''}
                   </option>
                 ))}
               </select>

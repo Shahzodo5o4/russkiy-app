@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { storage } from '../../storage';
+import { unitBadge } from '../../lib/unitLabel';
 import type { Unit } from '../../types';
 import BlocksEditor from './BlocksEditor';
 import ResourcesEditor from './ResourcesEditor';
@@ -11,11 +12,13 @@ const inputCls = 'mt-1 w-full rounded border border-grid bg-white px-3 py-2';
 export default function UnitEditor() {
   const { id } = useParams<{ id: string }>();
   const [unit, setUnit] = useState<Unit | null>(null);
+  const [units, setUnits] = useState<Unit[]>([]);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) storage.getUnit(id).then((u) => setUnit(u ?? null));
+    storage.getUnits().then(setUnits);
   }, [id]);
 
   if (!unit) return <p className="text-muted">Yuklanmoqda…</p>;
@@ -41,7 +44,7 @@ export default function UnitEditor() {
       <div className="rounded border border-grid bg-white p-4">
         <div className="flex items-baseline justify-between">
           <h2 className="font-medium">
-            {unit.order}-dars ·{' '}
+            {unitBadge(units, unit.id)} <span className="font-normal text-muted">#{unit.order}</span> ·{' '}
             <Link to={`/unit/${unit.id}`} className="underline">ko'rish</Link>
           </h2>
           <label className="flex items-center gap-2 text-sm">

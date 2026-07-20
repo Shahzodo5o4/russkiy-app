@@ -4,6 +4,7 @@ import StressedText from '../../components/StressedText';
 import { storage } from '../../storage';
 import { useAsync } from '../../hooks/useAsync';
 import { shuffle } from '../../lib/shuffle';
+import { unitLabels } from '../../lib/unitLabel';
 import QuizRunner from './QuizRunner';
 import type { QuizMode, QuizResult } from './types';
 import type { Word } from '../../types';
@@ -29,6 +30,7 @@ export default function QuizScreen() {
   const [results, setResults] = useState<QuizResult[]>([]);
 
   const [words, units, decks] = data.data ?? [[], [], []];
+  const labels = useMemo(() => unitLabels(units), [units]);
 
   const pool = useMemo(
     () => words
@@ -100,7 +102,7 @@ export default function QuizScreen() {
           value={unitId} onChange={(e) => setUnitId(e.target.value)}>
           <option value="">Barcha darslar</option>
           {units.map((u) => (
-            <option key={u.id} value={u.id}>{u.order} · {u.title}</option>
+            <option key={u.id} value={u.id}>{labels.get(u.id)?.badge} · {u.title}</option>
           ))}
         </select>
         <select className="rounded border border-grid bg-white px-2 py-2 text-sm"

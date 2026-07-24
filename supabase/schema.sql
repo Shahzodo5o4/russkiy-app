@@ -322,5 +322,6 @@ insert into decks (id, title, level, icon) values
   ('deck-24', 'Hasharotlar va tabiat',            'B1', '🐞'),
   ('deck-25', 'Bayramlar va an''analar',          'B1', '🎄'),
   ('deck-26', 'Fan, san''at, yutuqlar',           'B1', '🎖'),
-  ('deck-27', 'Global muammolar',                 'B1', '🌍')
+  ('deck-27', 'Global muammolar',                 'B1', '🌍'),
+  ('deck-28', 'Qo''shimcha leksika',              'A1', '📎')
 on conflict (id) do nothing;

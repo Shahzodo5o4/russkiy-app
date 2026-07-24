@@ -1,0 +1,1 @@
+import{r}from"./react-vendor-FQ9KFI_a.js";function f(s,n){const[o,t]=r.useState({loading:!0});return r.useEffect(()=>{let a=!0;return t({loading:!0}),s().then(e=>{a&&t({loading:!1,data:e})},e=>{a&&t({loading:!1,error:e instanceof Error?e.message:String(e)})}),()=>{a=!1}},n),o}export{f as u};

@@ -1,0 +1,1 @@
+const h={A1:5,A2:4,B1:3};function l(a,o,s){var d;const r=o.filter(e=>e.state==="tugadi"),c=Math.max(0,...r.map(e=>{var i;return((i=a.find(f=>f.id===e.unitId))==null?void 0:i.order)??0})),m=((d=a.find(e=>e.order===c))==null?void 0:d.level)??"A1",t=h[m],n=Math.max(0,r.length-s);return{ready:n>=t,fresh:n,needed:t,remaining:Math.max(0,t-n)}}export{l as e};

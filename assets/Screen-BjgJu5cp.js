@@ -1,0 +1,1 @@
+import{j as s}from"./index-C_0Ha3EW.js";function a({title:t,subtitle:e,children:m}){return s.jsxs("div",{className:"mx-auto w-full max-w-2xl",children:[s.jsx("h1",{className:"text-xl font-semibold",children:t}),e&&s.jsx("p",{className:"mt-1 text-sm text-muted",children:e}),s.jsx("div",{className:"mt-5",children:m})]})}export{a as S};

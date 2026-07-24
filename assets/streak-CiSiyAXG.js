@@ -1,0 +1,1 @@
+import{d as r}from"./date-BnFWS3sp.js";function c(t){return t.cardsReviewed>0||t.blocksDone>0}function o(t){const a=new Set(t.filter(c).map(s=>s.date)),e=new Date;a.has(r(e))||e.setDate(e.getDate()-1);let n=0;for(;a.has(r(e));)n++,e.setDate(e.getDate()-1);return n}export{o as c};

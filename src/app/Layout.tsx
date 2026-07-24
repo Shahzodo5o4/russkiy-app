@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 import { useProfile } from '../store/ProfileContext';
 import { supabase } from '../storage/supabase';
@@ -21,13 +22,22 @@ export default function Layout() {
           >
             Qoidalar
           </Link>
+          <Link
+            to="/settings"
+            title="Sozlamalar"
+            aria-label="Sozlamalar"
+            className="rounded border border-grid bg-white px-3 py-1.5 text-sm text-muted"
+          >
+            ⚙
+          </Link>
           {profile.isAdmin && (
             <Link
               to="/admin"
-              title="Kontent kiritish"
+              title="Kontent kiritish (admin)"
+              aria-label="Admin"
               className="rounded border border-grid bg-white px-3 py-1.5 text-sm text-muted"
             >
-              ⚙
+              🛠
             </Link>
           )}
           <button
@@ -44,7 +54,9 @@ export default function Layout() {
       </header>
 
       <main className="px-4 py-5">
-        <Outlet />
+        <Suspense fallback={<p className="text-muted">Yuklanmoqda…</p>}>
+          <Outlet />
+        </Suspense>
       </main>
 
       <TabBar />

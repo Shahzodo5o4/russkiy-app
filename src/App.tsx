@@ -1,24 +1,29 @@
+import { lazy } from 'react';
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom';
 import AuthGate from './features/auth/AuthGate';
 import { ProfileProvider } from './store/ProfileContext';
 import Layout from './app/Layout';
-import TodayScreen from './features/today/TodayScreen';
-import ReviewScreen from './features/review/ReviewScreen';
-import GrammarReviewScreen from './features/grammar/GrammarReviewScreen';
-import QuizScreen from './features/quiz/QuizScreen';
-import ExamScreen from './features/exam/ExamScreen';
-import UnitScreen from './features/unit/UnitScreen';
-import RulesScreen from './features/rules/RulesScreen';
-import SpeakScreen from './features/speak/SpeakScreen';
-import StatsScreen from './features/stats/StatsScreen';
-import AdminLayout from './features/admin/AdminLayout';
-import AdminUnits from './features/admin/AdminUnits';
-import UnitEditor from './features/admin/UnitEditor';
-import AdminWords from './features/admin/AdminWords';
-import AdminRules from './features/admin/AdminRules';
-import RuleEditor from './features/admin/RuleEditor';
-import AdminAudio from './features/admin/AdminAudio';
-import AdminBackup from './features/admin/AdminBackup';
+
+// Ekranlar lazy-load — boshlang'ich bundle kichik bo'lsin (route-level code-splitting).
+// Admin bo'limi va Stats (recharts) faqat kerak bo'lganda alohida chunk sifatida yuklanadi.
+const TodayScreen = lazy(() => import('./features/today/TodayScreen'));
+const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
+const GrammarReviewScreen = lazy(() => import('./features/grammar/GrammarReviewScreen'));
+const QuizScreen = lazy(() => import('./features/quiz/QuizScreen'));
+const ExamScreen = lazy(() => import('./features/exam/ExamScreen'));
+const UnitScreen = lazy(() => import('./features/unit/UnitScreen'));
+const RulesScreen = lazy(() => import('./features/rules/RulesScreen'));
+const SpeakScreen = lazy(() => import('./features/speak/SpeakScreen'));
+const StatsScreen = lazy(() => import('./features/stats/StatsScreen'));
+const SettingsScreen = lazy(() => import('./features/settings/SettingsScreen'));
+const AdminLayout = lazy(() => import('./features/admin/AdminLayout'));
+const AdminUnits = lazy(() => import('./features/admin/AdminUnits'));
+const UnitEditor = lazy(() => import('./features/admin/UnitEditor'));
+const AdminWords = lazy(() => import('./features/admin/AdminWords'));
+const AdminRules = lazy(() => import('./features/admin/AdminRules'));
+const RuleEditor = lazy(() => import('./features/admin/RuleEditor'));
+const AdminAudio = lazy(() => import('./features/admin/AdminAudio'));
+const AdminBackup = lazy(() => import('./features/admin/AdminBackup'));
 
 export default function App() {
   return (
@@ -36,6 +41,7 @@ export default function App() {
               <Route path="rules" element={<RulesScreen />} />
               <Route path="speak" element={<SpeakScreen />} />
               <Route path="stats" element={<StatsScreen />} />
+              <Route path="settings" element={<SettingsScreen />} />
               <Route path="admin" element={<AdminLayout />}>
                 <Route index element={<Navigate to="units" replace />} />
                 <Route path="units" element={<AdminUnits />} />

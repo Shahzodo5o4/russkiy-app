@@ -26,8 +26,21 @@ export default defineConfig({
         // Ilova qobig'i keshda — offline ochiladi; ma'lumot Supabase'dan
         globPatterns: ['**/*.{js,css,html,png,svg}'],
         navigateFallback: 'index.html',
+        cleanupOutdatedCaches: true,
+        maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
       },
     }),
   ],
   base: './',
+  build: {
+    rollupOptions: {
+      output: {
+        // React yadrosi kamdan-kam o'zgaradi — alohida chunk uzoq keshlanadi
+        // (ilova kodi yangilanganda foydalanuvchi react'ni qayta yuklamaydi).
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+        },
+      },
+    },
+  },
 });

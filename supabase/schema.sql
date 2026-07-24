@@ -237,8 +237,21 @@ on conflict (id) do nothing;
 
 insert into profiles (id, name) values
   ('shahzod',  'Shahzod'),
-  ('sherigim', 'Sherigim')
+  ('sherigim', 'Ma''mura')
 on conflict (id) do nothing;
+
+-- Real foydalanuvchi sozlamalari (Supabase Auth emaillari + admin bayrog'i).
+-- Profil ustunlari yuqorida qo'shilgan (email/is_admin/competes_in_stats).
+update profiles set email = 'shahzod.bahronov05@gmail.com', is_admin = true  where id = 'shahzod';
+update profiles set email = 'abdumamura0015@gmail.com',     is_admin = false where id = 'sherigim';
+
+insert into profiles (id, name, email, is_admin, competes_in_stats)
+values ('ukam', 'Ibrohim', 'bahronovibrohim09@gmail.com', false, false)
+on conflict (id) do update set
+  name              = excluded.name,
+  email             = excluded.email,
+  is_admin          = excluded.is_admin,
+  competes_in_stats = excluded.competes_in_stats;
 
 insert into units (id, "order", title, topic, grammar_focus, padej_ref, level, status) values
   ('u01', 1,  'Привет, студент',      'Tanishuv, salomlashish',  'Alifbo, «это», shaxs olmoshlari', null, 'A1', 'draft'),
@@ -296,5 +309,18 @@ insert into decks (id, title, level, icon) values
   ('deck-11', 'Harakat fe''llari',              'A2', '🚶'),
   ('deck-12', 'Ko''p ishlatiladigan fe''llar',  'A1', '⭐'),
   ('deck-13', 'Sifatlar',                       'A1', '✨'),
-  ('deck-14', 'Ish/ofis leksikasi',             'B1', '💼')
+  ('deck-14', 'Ish/ofis leksikasi',             'B1', '💼'),
+  ('deck-15', 'Shahar',                         'A2', '🏙'),
+  ('deck-16', 'Musiqa va bayram',               'A2', '🎉'),
+  ('deck-17', 'Ob-havo va tabiat',              'A2', '🌦'),
+  ('deck-18', 'Salomatlik',                     'A2', '🏥'),
+  ('deck-19', 'Sayohat va transport',           'A2', '✈️'),
+  ('deck-20', 'Restoran',                        'A2', '🍽'),
+  ('deck-21', 'Teatr va kino',                   'B1', '🎭'),
+  ('deck-22', 'Tashqi ko''rinish va oila',        'B1', '🧑'),
+  ('deck-23', 'Vatan va davlat',                  'B1', '🇷🇺'),
+  ('deck-24', 'Hasharotlar va tabiat',            'B1', '🐞'),
+  ('deck-25', 'Bayramlar va an''analar',          'B1', '🎄'),
+  ('deck-26', 'Fan, san''at, yutuqlar',           'B1', '🎖'),
+  ('deck-27', 'Global muammolar',                 'B1', '🌍')
 on conflict (id) do nothing;

@@ -19,7 +19,7 @@ export function softNormalize(s: string): string {
     .toLowerCase()
     .replace(/[a-z]/g, (ch) => LATIN_LOOKALIKES[ch] ?? ch)
     .replace(/ё/g, 'е')
-    .replace(/[.,!?;:«»"()\[\]…'’ʼ`]/g, '')
+    .replace(/[.,!?;:«»"()[\]…'’ʼ`]/g, '')
     .replace(/-/g, ' ')
     .replace(/\s+/g, ' ')
     .trim();

@@ -24,6 +24,9 @@ dist-ssr/
 .vite/
 *.local
 
+# ── graphify bilim grafi (generated chiqish, ~1MB) ──
+graphify-out/
+
 # ── Editor / OS ──
 .vscode/*
 !.vscode/extensions.json
